@@ -3,196 +3,208 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Yellow Moon Bakery - Familiar flavors in modern forms. Georgian bakery in Tbilisi.">
     <title>Yellow Moon Bakery</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            overflow-x: hidden;
-        }
-
-        #canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-        }
-
-        .content {
-            position: relative;
-            z-index: 1;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        header {
-            padding: 2rem 5%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-size: 1.1rem;
-            letter-spacing: 0.15em;
-            color: #f2c55c;
-            font-weight: 300;
-            cursor: pointer;
-        }
-
-        nav {
-            display: flex;
-            gap: 2.5rem;
-            font-size: 0.9rem;
-            letter-spacing: 0.08em;
-        }
-
-        nav a {
-            color: #e8d4a8;
-            text-decoration: none;
-            transition: color 0.3s;
-            cursor: pointer;
-        }
-
-        nav a:hover, nav a.active {
-            color: #f2c55c;
-        }
-
-        .menu-toggle {
-            display: none;
-            background: none;
-            border: none;
-            color: #f2c55c;
-            cursor: pointer;
-            font-size: 1.5rem;
-        }
-
-        main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 0 5%;
-            text-align: center;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        h1 {
-            font-size: clamp(3rem, 8vw, 7rem);
-            font-weight: 300;
-            letter-spacing: 0.02em;
-            color: #f2c55c;
-            margin-bottom: 1.5rem;
-            line-height: 1.1;
-        }
-
-        .tagline {
-            font-size: clamp(1.1rem, 2vw, 1.5rem);
-            color: #d4b88a;
-            max-width: 600px;
-            line-height: 1.6;
-            font-weight: 300;
-            letter-spacing: 0.03em;
-            margin-bottom: 3rem;
-        }
-
-        .cta-button {
-            padding: 1rem 3rem;
-            font-size: 0.9rem;
-            letter-spacing: 0.15em;
-            background: rgba(242, 197, 92, 0.1);
-            border: 1px solid rgba(242, 197, 92, 0.4);
-            color: #f2c55c;
-            cursor: pointer;
-            transition: all 0.4s ease;
-            backdrop-filter: blur(10px);
-        }
-
-        .cta-button:hover {
-            background: rgba(242, 197, 92, 0.2);
-            border-color: #f2c55c;
-        }
-
-        footer {
-            padding: 2rem 5%;
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.8rem;
-            letter-spacing: 0.08em;
-            color: #8a7355;
-        }
-
-        .fade-in {
-            opacity: 0;
-            transform: translateY(30px);
-            animation: fadeInUp 1.2s ease forwards;
-        }
-
-        .fade-in:nth-child(1) { animation-delay: 0.1s; }
-        .fade-in:nth-child(2) { animation-delay: 0.2s; }
-        .fade-in:nth-child(3) { animation-delay: 0.3s; }
-        .fade-in:nth-child(4) { animation-delay: 0.4s; }
-
-        @keyframes fadeInUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @media (max-width: 768px) {
-            nav {
-                display: none;
-            }
-
-            .menu-toggle {
-                display: block;
-            }
-
-            footer {
-                flex-direction: column;
-                gap: 1rem;
-                text-align: center;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <canvas id="canvas"></canvas>
+    <!-- WebGL Canvas -->
+    <canvas id="webgl-canvas"></canvas>
     
-    <div class="content">
-        <header>
-            <div class="logo fade-in">YMB</div>
-            <nav class="fade-in">
-                <a href="#menu">MENU</a>
-                <a href="#story">STORY</a>
-                <a href="#visit">VISIT</a>
+    <!-- Fallback Background -->
+    <div id="fallback-bg"></div>
+
+    <!-- Main Content Container -->
+    <div id="app">
+        <!-- Header Navigation -->
+        <header id="header">
+            <div class="logo" id="logo">YMB</div>
+            <nav class="desktop-nav">
+                <a href="#" data-page="menu">MENU</a>
+                <a href="#" data-page="story">STORY</a>
+                <a href="#" data-page="visit">VISIT</a>
             </nav>
-            <button class="menu-toggle">☰</button>
+            <button id="mobile-menu-btn" class="mobile-menu-btn">
+                <span class="menu-icon">☰</span>
+                <span class="close-icon" style="display: none;">✕</span>
+            </button>
         </header>
 
-        <main>
-            <h1 class="fade-in">Yellow Moon<br/>Bakery</h1>
-            <p class="tagline fade-in">Familiar flavors in modern forms</p>
-            <button class="cta-button fade-in">EXPLORE MENU</button>
-        </main>
+        <!-- Mobile Menu Overlay -->
+        <div id="mobile-menu" class="mobile-menu">
+            <a href="#" data-page="menu">MENU</a>
+            <a href="#" data-page="story">STORY</a>
+            <a href="#" data-page="visit">VISIT</a>
+        </div>
 
-        <footer class="fade-in">
-            <div>EST. 2026</div>
-            <div>HANDCRAFTED DAILY</div>
-        </footer>
+        <!-- Page Content -->
+        <main id="main-content">
+            <!-- Home Page -->
+            <div id="page-home" class="page active">
+                <div class="hero">
+                    <h1 class="fade-in">Yellow Moon<br/>Bakery</h1>
+                    <p class="fade-in tagline">Familiar flavors in modern forms</p>
+                    <button class="fade-in cta-button" data-page="menu">EXPLORE MENU</button>
+                </div>
+                <footer class="fade-in page-footer">
+                    <div>EST. 2026</div>
+                    <div>HANDCRAFTED DAILY</div>
+                </footer>
+            </div>
+
+            <!-- Menu Page -->
+            <div id="page-menu" class="page">
+                <div class="content-wrapper">
+                    <h1 class="fade-in">Our Menu</h1>
+                    <p class="fade-in subtitle">Fresh daily, rooted in tradition</p>
+
+                    <div class="menu-section fade-in">
+                        <h2>Khachapuri</h2>
+                        <div class="menu-item">
+                            <div class="item-info">
+                                <h3>Khachapuri Classic small</h3>
+                            </div>
+                            <div class="item-price">10 GEL</div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-info">
+                                <h3>Khachapuri Classic large</h3>
+                            </div>
+                            <div class="item-price">20 GEL</div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-info">
+                                <h3>Khachapuri Half Moon</h3>
+                            </div>
+                            <div class="item-price">12 GEL</div>
+                        </div>
+                    </div>
+
+                    <div class="menu-section fade-in">
+                        <h2>Kubdari</h2>
+                        <div class="menu-item">
+                            <div class="item-info">
+                                <h3>Kubdari Classic small</h3>
+                            </div>
+                            <div class="item-price">15 GEL</div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-info">
+                                <h3>Kubdari Half Moon</h3>
+                            </div>
+                            <div class="item-price">15 GEL</div>
+                        </div>
+                    </div>
+
+                    <div class="menu-section fade-in">
+                        <h2>Lobiani</h2>
+                        <div class="menu-item">
+                            <div class="item-info">
+                                <h3>Lobiani Classic small</h3>
+                            </div>
+                            <div class="item-price">9 GEL</div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-info">
+                                <h3>Lobiani Classic large</h3>
+                            </div>
+                            <div class="item-price">16 GEL</div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-info">
+                                <h3>Lobiani Half Moon</h3>
+                            </div>
+                            <div class="item-price">9 GEL</div>
+                        </div>
+                    </div>
+
+                    <div class="menu-section fade-in">
+                        <h2>Chicken Pesto</h2>
+                        <div class="menu-item">
+                            <div class="item-info">
+                                <h3>Chicken Pesto Half Moon</h3>
+                            </div>
+                            <div class="item-price">13 GEL</div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="item-info">
+                                <h3>Chicken Pesto Half Moon XL</h3>
+                            </div>
+                            <div class="item-price">20 GEL</div>
+                        </div>
+                    </div>
+
+                    <div class="menu-section fade-in">
+                        <h2>Sweet Treats</h2>
+                        <div class="menu-item">
+                            <div class="item-info">
+                                <h3>Super Cute Cat Butter Cookies (120 gr)</h3>
+                            </div>
+                            <div class="item-price">5 GEL</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Story Page -->
+            <div id="page-story" class="page">
+                <div class="content-wrapper story-content">
+                    <h1 class="fade-in">Our Story</h1>
+                    <p class="fade-in story-text">Yellow Moon Bakery began with a simple question: what if we could take the flavors we grew up with and reimagine them through a contemporary lens?</p>
+                    <p class="fade-in story-text">Founded in 2026, we draw inspiration from traditional techniques passed down through generations, infusing them with modern sensibilities. Each pastry tells a story of connection between heritage and innovation.</p>
+                    <p class="fade-in story-text">We source our ingredients from local farms and artisan producers, choosing quality over convenience. Our grains are stone-milled, our butter is cultured, and our honey comes from rooftop hives just blocks away.</p>
+                    <p class="fade-in story-text">Every morning before sunrise, our bakers begin their work by hand, shaping dough that has been fermenting overnight. The result is bread and pastries that carry the warmth of human touch and the depth of time-honored craft.</p>
+                    <p class="fade-in story-quote">"Baking is an act of patience and presence"</p>
+                </div>
+            </div>
+
+            <!-- Visit Page -->
+            <div id="page-visit" class="page">
+                <div class="content-wrapper">
+                    <h1 class="fade-in">Visit Us</h1>
+                    <div class="visit-grid">
+                        <div class="visit-column fade-in">
+                            <div class="info-block">
+                                <div class="icon">📍</div>
+                                <div>
+                                    <h3>Location</h3>
+                                    <p>Nutsubidze st. 24<br>Tbilisi, Georgia</p>
+                                </div>
+                            </div>
+                            <div class="info-block">
+                                <div class="icon">🕐</div>
+                                <div>
+                                    <h3>Hours</h3>
+                                    <p>Tuesday – Friday: 7am – 6pm<br>Saturday – Sunday: 8am – 4pm<br>Monday: Closed</p>
+                                </div>
+                            </div>
+                            <div class="info-block">
+                                <div class="icon">📞</div>
+                                <div>
+                                    <h3>Contact</h3>
+                                    <p>(995) 555-MOON<br>hello@yellowmoonbakery.com</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="visit-column fade-in">
+                            <h3>What to Know</h3>
+                            <ul class="info-list">
+                                <li>Our most popular items sell out by mid-morning on weekends</li>
+                                <li>Limited seating available, perfect for a quiet morning</li>
+                                <li>We accept cash, cards, and digital payments</li>
+                                <li>Special orders available with 48 hours notice</li>
+                                <li>Street parking and bike racks available</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="visit-highlight fade-in">
+                        <p>We're located in the heart of Tbilisi, surrounded by the vibrant energy of Nutsubidze district. Come early for the freshest selection, stay for the neighborhood charm.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
     </div>
 
-    <script src="script.js"></script>
+    <script src="main.js"></script>
 </body>
 </html>
